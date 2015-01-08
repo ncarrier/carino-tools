@@ -29,7 +29,7 @@ function set_environment {
 }
 
 function build_packages {
-	build_scripts=$(find -name '*.carbuild.sh' | sort)
+	build_scripts=$(find ${BUILD_SCRIPTS_DIR} -name '*.carbuild.sh' | sort)
 
 	for bs in ${build_scripts}; do
 		echo executing build script '"'${bs}'"'
