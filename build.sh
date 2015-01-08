@@ -1,5 +1,9 @@
 #!/bin/bash
 
+build_script_suffix=.carbuild.sh
+config_script_suffix=-config${build_script_suffix}
+config_script_suffix_length=19
+
 set -x
 
 . config/build_config
@@ -29,13 +33,24 @@ function set_environment {
 }
 
 function build_packages {
-	build_scripts=$(find ${BUILD_SCRIPTS_DIR} -name '*.carbuild.sh' | sort)
-
 	for bs in ${build_scripts}; do
+		# skip configuration build scripts, i.e. ending with -config.carbuild.sh
+		if [ "${bs: -${config_script_suffix_length}}" = "${config_script_suffix}" ]; then
+			continue
+		fi
+
 		echo executing build script '"'${bs}'"'
 		. ${bs}
 	done
 }
+
+if [ $# != 0 ]; then
+	for t in $*; do
+		build_scripts="${build_scripts} ${BUILD_SCRIPTS_DIR}/${t}${build_script_suffix}"
+	done
+else
+	build_scripts=$(find ${BUILD_SCRIPTS_DIR} -name "*${build_script_suffix}" | sort)
+fi
 
 create_tree_structure
 set_environment
