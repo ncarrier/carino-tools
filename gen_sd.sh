@@ -14,7 +14,7 @@ if [ "$(id -u)" != 0 ]; then
 	exit 1
 fi
 
-dcfldd if=/dev/zero of=out/carino.img bs=1M count=1000
+dcfldd if=/dev/zero of=out/carino.img bs=1M count=100
 
 loop_dev=$(losetup -f --show out/carino.img)
 
@@ -24,7 +24,7 @@ n
 p
 1
 
-+500M
++50M
 n
 p
 2
