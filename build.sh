@@ -5,6 +5,7 @@ config_script_suffix=-config${build_script_suffix}
 config_script_suffix_length=19
 
 set -x
+set -e
 
 . config/build_config
 
