@@ -14,7 +14,7 @@ function create_tree_structure {
 	mkdir -p ${STAGING_DIR}
 	mkdir -p ${FINAL_DIR}
 	mkdir -p ${BOOT_DIR}
-	mkdir -p ${UBOOT_DIR}
+	mkdir -p ${U_BOOT_DIR}
 }
 
 function set_environment {
@@ -23,7 +23,7 @@ function set_environment {
 	export STAGING_DIR
 	export FINAL_DIR
 	export BOOT_DIR
-	export UBOOT_DIR
+	export U_BOOT_DIR
 
 	export CONFIG_DIR
 	export PACKAGES_DIR
