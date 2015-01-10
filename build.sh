@@ -47,6 +47,11 @@ function build_packages {
 	done
 }
 
+function merge_skel {
+	cp -rpf ${CONFIG_DIR}/skel/* ${FINAL_DIR}
+	find ${FINAL_DIR} -name .gitignore -exec rm {} \;
+}
+
 if [ $# != 0 ]; then
 	manual_targets="true"
 	for t in $*; do
@@ -60,3 +65,4 @@ fi
 create_tree_structure
 set_environment
 build_packages
+merge_skel
