@@ -1,8 +1,8 @@
 #!/bin/bash
 
-build_script_suffix=.carbuild.sh
+build_script_suffix=.carbuild
 config_script_suffix=-config${build_script_suffix}
-config_script_suffix_length=19
+config_script_suffix_length=16
 
 set -x
 set -e
@@ -35,7 +35,7 @@ function set_environment {
 
 function build_packages {
 	for bs in ${build_scripts}; do
-		# skip configuration build scripts, i.e. ending with -config.carbuild.sh
+		# skip configuration build scripts, i.e. ending with -config.carbuild
 		if [ "${manual_targets}" = "false" ] &&
 				[ "${bs: -${config_script_suffix_length}}" = "${config_script_suffix}" ];
 		then
