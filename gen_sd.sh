@@ -17,7 +17,7 @@ fi
 
 img_file=${OUT_DIR}/carino.img
 
-dcfldd if=/dev/zero of=${img_file} bs=1M count=100
+dcfldd if=/dev/zero of=${img_file} bs=1M count=40
 
 loop_dev=$(losetup -f --show ${img_file})
 
@@ -29,7 +29,7 @@ n
 p
 1
 
-+50M
++20M
 n
 p
 2
