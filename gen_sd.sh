@@ -5,7 +5,8 @@
 # requires that the executables dcfldd, losetup, fdisk, kpartx, mkfs.vfat and
 # mkfs.ext4 are present in the path
 
-set -x
+#set -x
+set -e
 
 . config/build_config
 
@@ -20,6 +21,8 @@ dcfldd if=/dev/zero of=${img_file} bs=1M count=100
 
 loop_dev=$(losetup -f --show ${img_file})
 
+# the fdisk command fail when reloading partitions
+set +e
 # dont remove blank lines, they are meaningful, they interact with fdisk's prompt
 fdisk ${loop_dev} <<EOF
 n
@@ -34,6 +37,7 @@ p
 
 w
 EOF
+set -e
 
 # reload /dev files according to the new partitions
 partitions_list=$(LANG=C kpartx -av ${loop_dev} | sed 's/add map //g' | sed 's/ (.*//g')
