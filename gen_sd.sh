@@ -5,18 +5,20 @@
 # requires that the executables dcfldd, losetup, fdisk, kpartx, mkfs.vfat and
 # mkfs.ext4 are present in the path
 
-# TODO parametrize all that with config/build_config
-
 set -x
+
+. config/build_config
 
 if [ "$(id -u)" != 0 ]; then
 	echo this script must be ran as root user
 	exit 1
 fi
 
-dcfldd if=/dev/zero of=out/carino.img bs=1M count=100
+img_file=${OUT_DIR}/carino.img
 
-loop_dev=$(losetup -f --show out/carino.img)
+dcfldd if=/dev/zero of=${img_file} bs=1M count=100
+
+loop_dev=$(losetup -f --show ${img_file})
 
 # dont remove blank lines, they are meaningful, they interact with fdisk's prompt
 fdisk ${loop_dev} <<EOF
@@ -34,7 +36,7 @@ w
 EOF
 
 # reload /dev files according to the new partitions
-partitions_list=$(kpartx -av ${loop_dev} | sed 's/add map //g' | sed 's/ (.*//g')
+partitions_list=$(LANG=C kpartx -av ${loop_dev} | sed 's/add map //g' | sed 's/ (.*//g')
 partitions=( $partitions_list )
 boot_partition=${partitions[0]}
 root_partition=${partitions[1]}
@@ -50,17 +52,17 @@ mkfs.ext4 /dev/mapper/${root_partition}
 dcfldd if=/dev/zero of=${loop_dev} bs=1k count=1023 seek=1
 
 # write u-boot
-dcfldd if=out/u-boot/u-boot-sunxi-with-spl.bin of=${loop_dev} bs=1024 seek=8
+dcfldd if=${U_BOOT_DIR}/u-boot-sunxi-with-spl.bin of=${loop_dev} bs=1024 seek=8
 
 # copy files
 mount_point=$(mktemp --directory)
 mount /dev/mapper/${boot_partition} ${mount_point}
-cp out/boot/* ${mount_point}
+cp ${BOOT_DIR}/* ${mount_point}
 sync
 umount ${mount_point}
 
 mount /dev/mapper/${root_partition} ${mount_point}
-cp -rpf out/final/* ${mount_point}
+cp -rpf ${FINAL_DIR}/* ${mount_point}
 sync
 umount ${mount_point}
 
@@ -70,3 +72,4 @@ sync
 kpartx -d ${loop_dev}
 losetup -d ${loop_dev}
 
+echo SD image created at ${img_file}
