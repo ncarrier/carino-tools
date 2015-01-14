@@ -1,0 +1,53 @@
+#!/bin/bash
+
+set -x
+set -e
+
+. config/build_config
+
+on_exit() {
+	echo kill ${inot_pid}
+#	kill ${inot_pid}
+	# other method don't work for now... TODO
+	ps -e | grep inotifywait
+	killall inotifywait
+}
+
+# the place monitored for file creation
+local_prefix=${FINAL_DIR}
+mkdir -p ${local_prefix}
+
+# the output of the watch, listing all the created files
+list_file=/tmp/bau.list
+rm -f ${list_file}
+inotifywait --monitor --recursive --event create,moved_to,modify ${local_prefix} \
+		    --outfile ${list_file} &
+
+inot_pid=$!
+
+trap "on_exit" 2 3 15
+
+# TODO should replace this by a notification on inotify readiness
+#sleep 1
+
+# call the build script
+./build.sh "$@" |& sed ''/[Ww]arning/s//`printf "\033[5;7;31mWarning\033[0m"`/''
+
+set +e
+adb shell mount -orw,remount / > /dev/null 2>&1
+
+sort --unique ${list_file} | while read line
+do
+	filename=${line##* }
+	if [ "${filename}" = ".gitignore" ]; then
+		continue
+	fi
+	local_path=${line%% *}
+	remote_path=/${local_path#${local_prefix}}
+	echo adb push ${local_path}/${filename} ${remote_path}/
+	adb push ${local_path}/${filename} ${remote_path}/
+done
+
+echo adb shell sync
+
+on_exit
