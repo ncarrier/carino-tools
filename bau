@@ -6,11 +6,7 @@ set -e
 . config/build_config
 
 on_exit() {
-	echo kill ${inot_pid}
-#	kill ${inot_pid}
-	# other method don't work for now... TODO
-	ps -e | grep inotifywait
-	killall inotifywait
+	kill -9 ${inot_pid}
 }
 
 # the place monitored for file creation
