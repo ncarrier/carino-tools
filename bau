@@ -43,6 +43,10 @@ do
 		continue
 	fi
 	local_path=${line%% *}
+	full_path=${local_path}/${filename}
+	if [ ! -f "${full_path}" ] || [ -L "${full_path}" ]; then
+		continue
+	fi
 	remote_path=/${local_path#${local_prefix}}
 	echo adb push ${local_path}/${filename} ${remote_path}/
 	adb push ${local_path}/${filename} ${remote_path}/
