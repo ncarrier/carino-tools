@@ -48,6 +48,11 @@ do
 		continue
 	fi
 	remote_path=/${local_path#${local_prefix}}
+	local_md5=$(md5sum "${local_path}/${filename}" | cut -f 1 -d ' ')
+	remote_md5=$(adb shell md5sum "${remote_path}/${filename}" | cut -f 1 -d ' ')
+	if [ "${local_md5}" = "${remote_md5}" ]; then
+		continue
+	fi
 	echo adb push ${local_path}/${filename} ${remote_path}/
 	adb push ${local_path}/${filename} ${remote_path}/
 done
