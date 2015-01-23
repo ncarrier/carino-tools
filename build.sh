@@ -49,7 +49,8 @@ function build_packages {
 			mkdir -p ${BUILD_DIR}/${t}
 		fi
 		echo executing build script '"'${bs}'"'
-		PACKAGE_BUILD_DIR=${BUILD_DIR}/${t} . ${bs}
+		PACKAGE_BUILD_DIR=${BUILD_DIR}/${t} . ${bs} 2>&1 | \
+				/usr/share/colormake/colormake.pl
 	done
 }
 
