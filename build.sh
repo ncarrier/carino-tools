@@ -34,8 +34,6 @@ function set_environment {
 
 function build_packages {
 	for bs in ${build_scripts}; do
-		# skip configuration build scripts, i.e. ending with
-		# -config.carbuild
 		if [ "${manual_targets}" = "false" ] &&
 				[[ ${bs} = *${config_script_suffix} ]];
 		then
@@ -56,15 +54,14 @@ function merge_skel {
 
 if [ $# != 0 ]; then
 	manual_targets="true"
-	targets=$*
+	targets=($*)
 else
 	manual_targets="false"
-	targets=$(cat ${CONFIG_DIR}/packages)
+	targets=($(cat ${CONFIG_DIR}/packages))
 fi
 
-for t in ${targets}; do
-	build_scripts="${build_scripts} ${BUILD_SCRIPTS_DIR}/${t}${build_script_suffix}"
-done
+targets=(${targets[@]/#/${BUILD_SCRIPTS_DIR}/}) # pre-pend build scripts dir
+targets=${targets[@]/%/${build_script_suffix}} # append script suffix
 
 create_tree_structure
 set_environment
