@@ -56,13 +56,15 @@ function merge_skel {
 
 if [ $# != 0 ]; then
 	manual_targets="true"
-	for t in $*; do
-		build_scripts="${build_scripts} ${BUILD_SCRIPTS_DIR}/${t}${build_script_suffix}"
-	done
+	targets=$*
 else
 	manual_targets="false"
-	build_scripts=$(find ${BUILD_SCRIPTS_DIR} -name "*${build_script_suffix}" | sort)
+	targets=$(cat ${CONFIG_DIR}/packages)
 fi
+
+for t in ${targets}; do
+	build_scripts="${build_scripts} ${BUILD_SCRIPTS_DIR}/${t}${build_script_suffix}"
+done
 
 create_tree_structure
 set_environment
