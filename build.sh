@@ -33,17 +33,23 @@ function set_environment {
 }
 
 function build_packages {
-	for bs in ${build_scripts}; do
-		if [ "${manual_targets}" = "false" ] &&
-				[[ ${bs} = *${config_script_suffix} ]];
+	for t in ${targets}; do
+		bs=${BUILD_SCRIPTS_DIR}/${t}${build_script_suffix}
+		if [ "${manual_targets}" = "false" ] && \
+			[[ ${bs} = *${config_script_suffix} ]];
 		then
 			echo skipping config build script when no explicit \
 				target is specified
 			continue
 		fi
 
+		# prepare package build
+		if [[ ${bs} != *${config_script_suffix} ]]; then
+			# create build dir except for config scripts
+			mkdir -p ${BUILD_DIR}/${t}
+		fi
 		echo executing build script '"'${bs}'"'
-		. ${bs}
+		PACKAGE_BUILD_DIR=${BUILD_DIR}/${t} . ${bs}
 	done
 }
 
@@ -54,14 +60,11 @@ function merge_skel {
 
 if [ $# != 0 ]; then
 	manual_targets="true"
-	targets=($*)
+	targets=$*
 else
 	manual_targets="false"
-	targets=($(cat ${CONFIG_DIR}/packages))
+	targets=$(cat ${CONFIG_DIR}/packages)
 fi
-
-targets=(${targets[@]/#/${BUILD_SCRIPTS_DIR}/}) # pre-pend build scripts dir
-targets=${targets[@]/%/${build_script_suffix}} # append script suffix
 
 create_tree_structure
 set_environment
