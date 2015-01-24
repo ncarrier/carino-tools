@@ -3,3 +3,14 @@ alias bau='./tools/bau'
 alias sd='./tools/gen_sd.sh'
 alias st='for g in $(find -name .git); do cd $g/..; pwd; git status; cd -; done'
 
+# completion for bb and bau aliases
+_carbuild()
+{
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	targets=$(\ls build_scripts/*.carbuild | sed 's#.*/\([^.]*\)\.carbuild#\1#g')
+	COMPREPLY=( $(compgen -W "${targets}" -- ${cur}) )
+}
+
+complete -F _carbuild bb
+complete -F _carbuild bau
+complete -F _carbuild ./build.sh
