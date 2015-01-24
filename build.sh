@@ -51,6 +51,7 @@ function build_packages {
 		echo executing build script '"'${bs}'"'
 		PACKAGE_BUILD_DIR=${BUILD_DIR}/${t} . ${bs} 2>&1 | \
 				/usr/share/colormake/colormake.pl
+		test ${PIPESTATUS[0]} -eq 0
 	done
 }
 
