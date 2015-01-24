@@ -1,4 +1,4 @@
-alias bb='./tools/build.sh'
+alias bb='time ./tools/build.sh'
 alias bau='./tools/bau'
 alias sd='./tools/gen_sd.sh'
 alias st='for g in $(find -name .git); do cd $g/..; pwd; git status; cd -; done'
