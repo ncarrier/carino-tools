@@ -7,7 +7,7 @@ alias st='for g in $(find -name .git); do cd $g/..; pwd; git status; cd -; done'
 _carbuild()
 {
 	cur="${COMP_WORDS[COMP_CWORD]}"
-	targets=$(\ls build_scripts/*.carbuild | sed 's#.*/\([^.]*\)\.carbuild#\1#g')
+	targets=$(\ls build_scripts/*.carbuild | sed 's#.*/\(.*\)\.carbuild#\1#g')
 	COMPREPLY=( $(compgen -W "${targets}" -- ${cur}) )
 }
 
