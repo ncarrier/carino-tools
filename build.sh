@@ -16,6 +16,7 @@ function create_tree_structure {
 	mkdir -p ${FINAL_DIR}
 	mkdir -p ${BOOT_DIR}
 	mkdir -p ${U_BOOT_DIR}
+	mkdir -p ${PKG_CONFIG_PATH}
 }
 
 function set_environment {
@@ -26,12 +27,21 @@ function set_environment {
 	export FINAL_DIR
 	export BOOT_DIR
 	export U_BOOT_DIR
+	export PKG_CONFIG_PATH
 
 	export CONFIG_DIR
 	export PACKAGES_DIR
 	export BUILD_SCRIPTS_DIR
 
 	export TOOLCHAIN_PREFIX
+	export LIBC_DIR
+	export CC
+	export AS
+
+	export CPPFLAGS
+	export LDFLAGS
+
+	export PATH
 }
 
 function build_packages {
@@ -51,9 +61,12 @@ function build_packages {
 			mkdir -p ${BUILD_DIR}/${t}
 		fi
 		echo executing build script '"'${bs}'"'
-		PACKAGE_BUILD_DIR=${BUILD_DIR}/${t} . ${bs} 2>&1 | \
+
+		PACKAGE_NAME=${t} \
+				PACKAGE_BUILD_DIR=${BUILD_DIR}/${t} \
+				. ${bs} 2>&1 | \
 				/usr/share/colormake/colormake.pl
-		test ${PIPESTATUS[0]} -eq 0
+		test ${PIPESTATUS[0]} -eq 0 # fail on build error
 	done
 }
 
