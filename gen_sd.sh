@@ -17,7 +17,7 @@ fi
 
 img_file=${OUT_DIR}/carino.img
 
-dcfldd if=/dev/zero of=${img_file} bs=1M count=60
+dcfldd if=/dev/zero of=${img_file} bs=1M count=${IMAGE_SIZE}
 
 loop_dev=$(losetup -f --show ${img_file})
 
@@ -29,7 +29,7 @@ n
 p
 1
 
-+20M
++${BOOT_PARTITION_SIZE}M
 n
 p
 2
