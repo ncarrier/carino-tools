@@ -62,7 +62,7 @@ function build_packages {
 		fi
 		echo executing build script '"'${bs}'"'
 
-		PACKAGE_NAME=${t} \
+		PACKAGE_NAME=${t%.host} \
 				PACKAGE_BUILD_DIR=${BUILD_DIR}/${t} \
 				. ${bs} 2>&1 | \
 				/usr/share/colormake/colormake.pl
