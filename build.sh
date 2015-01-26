@@ -35,8 +35,6 @@ function set_environment {
 
 	export TOOLCHAIN_PREFIX
 	export LIBC_DIR
-	export CC
-	export AS
 
 	export CPPFLAGS
 	export LDFLAGS
@@ -62,11 +60,23 @@ function build_packages {
 		fi
 		echo executing build script '"'${bs}'"'
 
-		PACKAGE_NAME=${t%.host} \
-				PACKAGE_BUILD_DIR=${BUILD_DIR}/${t} \
-				. ${bs} 2>&1 | \
-				/usr/share/colormake/colormake.pl
-		test ${PIPESTATUS[0]} -eq 0 # fail on build error
+		if [[ ${t} = *.host ]]; then
+			# use host toolchain for host tools build...
+			PACKAGE_NAME=${t%.host} \
+					PACKAGE_BUILD_DIR=${BUILD_DIR}/${t} \
+					. ${bs} 2>&1 | \
+					/usr/share/colormake/colormake.pl
+			test ${PIPESTATUS[0]} -eq 0 # fail on build error
+		else
+			# .. and cross toolchain for target build
+			AS=${CROSS_AS} \
+			CC=${CROSS_CC} \
+			PACKAGE_NAME=${t} \
+					PACKAGE_BUILD_DIR=${BUILD_DIR}/${t} \
+					. ${bs} 2>&1 | \
+					/usr/share/colormake/colormake.pl
+			test ${PIPESTATUS[0]} -eq 0 # fail on build error
+		fi
 	done
 }
 
