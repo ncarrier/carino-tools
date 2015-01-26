@@ -12,6 +12,7 @@ function create_tree_structure {
 	mkdir -p ${OUT_DIR}
 	mkdir -p ${BUILD_DIR}
 	mkdir -p ${STAGING_DIR}
+	mkdir -p ${STAGING_HOST_DIR}
 	mkdir -p ${FINAL_DIR}
 	mkdir -p ${BOOT_DIR}
 	mkdir -p ${U_BOOT_DIR}
@@ -21,6 +22,7 @@ function set_environment {
 	export OUT_DIR
 	export BUILD_DIR
 	export STAGING_DIR
+	export STAGING_HOST_DIR
 	export FINAL_DIR
 	export BOOT_DIR
 	export U_BOOT_DIR
