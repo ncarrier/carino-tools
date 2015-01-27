@@ -59,6 +59,7 @@ function build_packages {
 
 		if [[ ${t} = *.host ]]; then
 			# use host toolchain for host tools build...
+			PKG_CONFIG_PATH=${HOST_PKG_CONFIG_PATH} \
 			CFLAGS=${HOST_CFLAGS} \
 			CPPFLAGS=${HOST_CPPFLAGS} \
 			LDFLAGS=${HOST_LDFLAGS} \
