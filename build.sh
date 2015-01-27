@@ -63,6 +63,7 @@ function build_packages {
 			CFLAGS=${HOST_CFLAGS} \
 			CPPFLAGS=${HOST_CPPFLAGS} \
 			LDFLAGS=${HOST_LDFLAGS} \
+			CC="ccache gcc" \
 			PACKAGE_NAME=${t%.host} \
 					PACKAGE_BUILD_DIR=${BUILD_DIR}/${t} \
 					. ${bs} 2>&1 | \
