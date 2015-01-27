@@ -36,9 +36,6 @@ function set_environment {
 	export TOOLCHAIN_PREFIX
 	export LIBC_DIR
 
-	export CPPFLAGS
-	export LDFLAGS
-
 	export PATH
 }
 
@@ -62,6 +59,9 @@ function build_packages {
 
 		if [[ ${t} = *.host ]]; then
 			# use host toolchain for host tools build...
+			CFLAGS=${HOST_CFLAGS} \
+			CPPFLAGS=${HOST_CPPFLAGS} \
+			LDFLAGS=${HOST_LDFLAGS} \
 			PACKAGE_NAME=${t%.host} \
 					PACKAGE_BUILD_DIR=${BUILD_DIR}/${t} \
 					. ${bs} 2>&1 | \
@@ -69,6 +69,9 @@ function build_packages {
 			test ${PIPESTATUS[0]} -eq 0 # fail on build error
 		else
 			# .. and cross toolchain for target build
+			CFLAGS=${CROSS_CFLAGS} \
+			CPPFLAGS=${CROSS_CPPFLAGS} \
+			LDFLAGS=${CROSS_LDFLAGS} \
 			AS=${CROSS_AS} \
 			CC=${CROSS_CC} \
 			PACKAGE_NAME=${t} \
