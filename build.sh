@@ -22,6 +22,39 @@ function create_tree_structure {
 	mkdir -p ${PKG_CONFIG_PATH}
 }
 
+function clean_inot_file {
+	tmp_file=$(mktemp)
+	sed 's# .* ##g' $1 | sort --unique | while read line; do
+		if [ -e "${line}" ] || [ -h "${line}" ]; then
+			echo ${line} >> ${tmp_file}
+		fi
+	done
+
+	mv ${tmp_file} $1
+}
+
+function start_watching_installed_files {
+	target=$1
+	inot_file=$2
+
+	tmp_file=$(mktemp)
+	inotifywait --monitor --recursive \
+		--event create,moved_to,modify ${STAGING_DIR} \
+		--outfile ${inot_file} \
+		> ${tmp_file} 2>&1 &
+
+	inotify_pid=$!
+
+	cat ${tmp_file} | while read line; do
+		if [ "${line}" = "Watches established." ]; then
+			break
+		fi
+	done
+	rm ${tmp_file}
+
+	echo ${inotify_pid}
+}
+
 function dirclean {
 	target=$1
 
@@ -51,6 +84,9 @@ function build_packages {
 		t=${target%-config}
 		mkdir -p ${BUILD_DIR}/${target}
 
+		inot_file=${BUILD_DIR}/${target}/${target}.staging_files
+		inotify_pid=$(start_watching_installed_files ${target} \
+			${inot_file})
 
 		package_name=${target%.host}
 		echo " *** executing build script \"${bs}\""
@@ -80,6 +116,10 @@ function build_packages {
 			test ${PIPESTATUS[0]} -eq 0 # fail on build error
 		fi
 		echo " *** ${bs} executed successfully"
+
+		kill ${inotify_pid}
+
+		clean_inot_file ${inot_file}
 	done
 }
 
