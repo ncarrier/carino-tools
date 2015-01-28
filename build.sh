@@ -3,7 +3,10 @@
 build_script_suffix=.carbuild
 config_script_suffix=-config${build_script_suffix}
 
-set -x
+if [ "${V}" = "1" ]; then
+	set -x
+fi
+
 set -e
 
 . config/build_config
