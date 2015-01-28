@@ -22,6 +22,11 @@ function create_tree_structure {
 function build_packages {
 	for t in ${targets}; do
 		bs=${BUILD_SCRIPTS_DIR}/${t}${build_script_suffix}
+		if [ ! -e "${bs}" ]; then
+			echo no build script named '"'${bs}'"'
+			exit 1
+		fi
+
 		# create build dir
 		t=${t%-config}
 		mkdir -p ${BUILD_DIR}/${t}
