@@ -56,7 +56,7 @@ function build_packages {
 			LDFLAGS=${HOST_LDFLAGS} \
 			CC="ccache gcc" \
 			PACKAGE_NAME=${package_name} \
-			PACKAGE_BUILD_DIR=${BUILD_DIR}/${package_name} \
+			PACKAGE_BUILD_DIR=${BUILD_DIR}/${t} \
 					. ${bs} 2>&1 | \
 					/usr/share/colormake/colormake.pl
 			test ${PIPESTATUS[0]} -eq 0 # fail on build error
