@@ -64,7 +64,6 @@ function dirclean {
 	fi
 	rm -rf ${BUILD_DIR}/${target}
 	echo " *** removed build directory for ${target%-dirclean}"
-	continue
 }
 
 function build_packages {
@@ -78,6 +77,7 @@ function build_packages {
 		fi
 		if [[ ${target}  = *-dirclean ]]; then
 			dirclean ${target%-dirclean}
+			continue
 		fi
 
 		# create build dir
