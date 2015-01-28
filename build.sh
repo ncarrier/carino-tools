@@ -19,26 +19,6 @@ function create_tree_structure {
 	mkdir -p ${PKG_CONFIG_PATH}
 }
 
-function set_environment {
-	export OUT_DIR
-	export BUILD_DIR
-	export STAGING_DIR
-	export STAGING_HOST_DIR
-	export FINAL_DIR
-	export BOOT_DIR
-	export U_BOOT_DIR
-	export PKG_CONFIG_PATH
-
-	export CONFIG_DIR
-	export PACKAGES_DIR
-	export BUILD_SCRIPTS_DIR
-
-	export TOOLCHAIN_PREFIX
-	export LIBC_DIR
-
-	export PATH
-}
-
 function build_packages {
 	for t in ${targets}; do
 		bs=${BUILD_SCRIPTS_DIR}/${t}${build_script_suffix}
@@ -89,6 +69,5 @@ else
 fi
 
 create_tree_structure
-set_environment
 build_packages
 merge_skel
