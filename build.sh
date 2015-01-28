@@ -66,61 +66,62 @@ function dirclean {
 	echo " *** removed build directory for ${target%-dirclean}"
 }
 
-function build_packages {
-	for target in ${targets}; do
-		echo ' *** handling target "'${target}'"'
-		cd ${BUILD_SCRIPTS_DIR}
-		bs=${BUILD_SCRIPTS_DIR}/${target%-dirclean}${build_script_suffix}
-		if [ ! -e "${bs}" ] && [ ! -h "${bs}" ]; then
-			echo no build script named '"'${bs}'"'
-			exit 1
-		fi
-		if [[ ${target}  = *-dirclean ]]; then
-			dirclean ${target%-dirclean}
-			continue
-		fi
+function build_package {
+	target=$1
 
-		# create build dir
-		t=${target%-config}
-		mkdir -p ${BUILD_DIR}/${target}
+	echo ' *** handling target "'${target}'"'
+	cd ${BUILD_SCRIPTS_DIR}
+	bs=${BUILD_SCRIPTS_DIR}/${target%-dirclean}${build_script_suffix}
+	if [ ! -e "${bs}" ] && [ ! -h "${bs}" ]; then
+		echo no build script named '"'${bs}'"'
+		exit 1
+	fi
+	if [[ ${target}  = *-dirclean ]]; then
+		dirclean ${target%-dirclean}
+		continue
+	fi
 
-		inot_file=${BUILD_DIR}/${target}/${target}.staging_files
-		inotify_pid=$(start_watching_installed_files ${target} \
-			${inot_file})
+	# create build dir
+	t=${target%-config}
+	mkdir -p ${BUILD_DIR}/${target}
 
-		package_name=${target%.host}
-		echo " *** executing build script \"${bs}\""
-		if [[ ${target} = *.host ]]; then
-			# use host toolchain for host tools build...
-			PKG_CONFIG_PATH=${HOST_PKG_CONFIG_PATH} \
-			CFLAGS=${HOST_CFLAGS} \
-			CPPFLAGS=${HOST_CPPFLAGS} \
-			LDFLAGS=${HOST_LDFLAGS} \
-			CC="${CCACHE} gcc" \
-			PACKAGE_NAME=${package_name} \
-			PACKAGE_BUILD_DIR=${BUILD_DIR}/${target} \
-					. ${bs} 2>&1 | \
-					/usr/share/colormake/colormake.pl
-			test ${PIPESTATUS[0]} -eq 0 # fail on build error
-		else
-			# .. and cross toolchain for target build
-			CFLAGS=${CROSS_CFLAGS} \
-			CPPFLAGS=${CROSS_CPPFLAGS} \
-			LDFLAGS=${CROSS_LDFLAGS} \
-			AS=${CROSS_AS} \
-			CC=${CROSS_CC} \
-			PACKAGE_NAME=${package_name} \
-			PACKAGE_BUILD_DIR=${BUILD_DIR}/${package_name} \
-					. ${bs} 2>&1 | \
-					/usr/share/colormake/colormake.pl
-			test ${PIPESTATUS[0]} -eq 0 # fail on build error
-		fi
-		echo " *** ${bs} executed successfully"
+	inot_file=${BUILD_DIR}/${target}/${target}.staging_files
+	inotify_pid=$(start_watching_installed_files ${target} \
+		${inot_file})
 
-		kill ${inotify_pid}
+	package_name=${target%.host}
+	echo " *** executing build script \"${bs}\""
+	if [[ ${target} = *.host ]]; then
+		# use host toolchain for host tools build...
+		PKG_CONFIG_PATH=${HOST_PKG_CONFIG_PATH} \
+		CFLAGS=${HOST_CFLAGS} \
+		CPPFLAGS=${HOST_CPPFLAGS} \
+		LDFLAGS=${HOST_LDFLAGS} \
+		CC="${CCACHE} gcc" \
+		PACKAGE_NAME=${package_name} \
+		PACKAGE_BUILD_DIR=${BUILD_DIR}/${target} \
+				. ${bs} 2>&1 | \
+				/usr/share/colormake/colormake.pl
+		test ${PIPESTATUS[0]} -eq 0 # fail on build error
+	else
+		# .. and cross toolchain for target build
+		CFLAGS=${CROSS_CFLAGS} \
+		CPPFLAGS=${CROSS_CPPFLAGS} \
+		LDFLAGS=${CROSS_LDFLAGS} \
+		AS=${CROSS_AS} \
+		CC=${CROSS_CC} \
+		PACKAGE_NAME=${package_name} \
+		PACKAGE_BUILD_DIR=${BUILD_DIR}/${package_name} \
+				. ${bs} 2>&1 | \
+				/usr/share/colormake/colormake.pl
+		test ${PIPESTATUS[0]} -eq 0 # fail on build error
+	fi
+	echo " *** ${bs} executed successfully"
 
-		clean_inot_file ${inot_file}
-	done
+	kill ${inotify_pid}
+	inotify_pid=
+
+	clean_inot_file ${inot_file}
 }
 
 function merge_skel {
@@ -135,5 +136,7 @@ else
 fi
 
 create_tree_structure
-build_packages
+for target in ${targets}; do
+	build_package ${target}
+done
 merge_skel
