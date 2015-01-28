@@ -11,6 +11,12 @@ set -e
 
 . config/build_config
 
+function on_exit {
+	if [ -n "${inotify_pid}" ]; then
+		kill -9 ${inotify_pid}
+	fi
+}
+
 function create_tree_structure {
 	mkdir -p ${OUT_DIR}
 	mkdir -p ${BUILD_DIR}
@@ -134,6 +140,8 @@ if [ $# != 0 ]; then
 else
 	targets=$(cat ${CONFIG_DIR}/packages)
 fi
+
+trap "on_exit" EXIT RETURN 2 3 15
 
 create_tree_structure
 for target in ${targets}; do
