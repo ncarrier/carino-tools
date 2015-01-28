@@ -50,13 +50,12 @@ function build_packages {
 			continue
 		fi
 
-		# prepare package build
-		if [[ ${bs} != *${config_script_suffix} ]]; then
-			# create build dir except for config scripts
-			mkdir -p ${BUILD_DIR}/${t}
-		fi
-		echo executing build script '"'${bs}'"'
+		# create build dir
+		t=${t%-config}
+		mkdir -p ${BUILD_DIR}/${t}
 
+		package_name=${t%.host}
+		echo executing build script '"'${bs}'"'
 		if [[ ${t} = *.host ]]; then
 			# use host toolchain for host tools build...
 			PKG_CONFIG_PATH=${HOST_PKG_CONFIG_PATH} \
@@ -64,8 +63,8 @@ function build_packages {
 			CPPFLAGS=${HOST_CPPFLAGS} \
 			LDFLAGS=${HOST_LDFLAGS} \
 			CC="ccache gcc" \
-			PACKAGE_NAME=${t%.host} \
-					PACKAGE_BUILD_DIR=${BUILD_DIR}/${t} \
+			PACKAGE_NAME=${package_name} \
+			PACKAGE_BUILD_DIR=${BUILD_DIR}/${package_name} \
 					. ${bs} 2>&1 | \
 					/usr/share/colormake/colormake.pl
 			test ${PIPESTATUS[0]} -eq 0 # fail on build error
@@ -76,12 +75,13 @@ function build_packages {
 			LDFLAGS=${CROSS_LDFLAGS} \
 			AS=${CROSS_AS} \
 			CC=${CROSS_CC} \
-			PACKAGE_NAME=${t} \
-					PACKAGE_BUILD_DIR=${BUILD_DIR}/${t} \
+			PACKAGE_NAME=${package_name} \
+			PACKAGE_BUILD_DIR=${BUILD_DIR}/${package_name} \
 					. ${bs} 2>&1 | \
 					/usr/share/colormake/colormake.pl
 			test ${PIPESTATUS[0]} -eq 0 # fail on build error
 		fi
+		echo "${bs} executed successfully"
 	done
 }
 
