@@ -22,32 +22,39 @@ function create_tree_structure {
 	mkdir -p ${PKG_CONFIG_PATH}
 }
 
+function dirclean {
+	target=$1
+
+	if [[ ${target%-dirclean}  = *-config ]]; then
+		echo "cannot dirclean a config target !"
+		exit 1
+	fi
+	rm -rf ${BUILD_DIR}/${target}
+	echo " *** removed build directory for ${target%-dirclean}"
+	continue
+}
+
 function build_packages {
-	for t in ${targets}; do
-		echo 'handling target "'${t}'"'
+	for target in ${targets}; do
+		echo ' *** handling target "'${target}'"'
 		cd ${BUILD_SCRIPTS_DIR}
-		bs=${BUILD_SCRIPTS_DIR}/${t%-dirclean}${build_script_suffix}
+		bs=${BUILD_SCRIPTS_DIR}/${target%-dirclean}${build_script_suffix}
 		if [ ! -e "${bs}" ] && [ ! -h "${bs}" ]; then
 			echo no build script named '"'${bs}'"'
 			exit 1
 		fi
-		if [[ ${t}  = *-dirclean ]]; then
-			if [[ ${t%-dirclean}  = *-config ]]; then
-				echo "cannot dirclean a config target !"
-				exit 1
-			fi
-			rm -rf ${BUILD_DIR}/${t}
-			echo "removed build directory for ${t%-dirclean}"
-			continue
+		if [[ ${target}  = *-dirclean ]]; then
+			dirclean ${target%-dirclean}
 		fi
 
 		# create build dir
-		t=${t%-config}
-		mkdir -p ${BUILD_DIR}/${t}
+		t=${target%-config}
+		mkdir -p ${BUILD_DIR}/${target}
 
-		package_name=${t%.host}
-		echo executing build script '"'${bs}'"'
-		if [[ ${t} = *.host ]]; then
+
+		package_name=${target%.host}
+		echo " *** executing build script \"${bs}\""
+		if [[ ${target} = *.host ]]; then
 			# use host toolchain for host tools build...
 			PKG_CONFIG_PATH=${HOST_PKG_CONFIG_PATH} \
 			CFLAGS=${HOST_CFLAGS} \
@@ -55,7 +62,7 @@ function build_packages {
 			LDFLAGS=${HOST_LDFLAGS} \
 			CC="${CCACHE} gcc" \
 			PACKAGE_NAME=${package_name} \
-			PACKAGE_BUILD_DIR=${BUILD_DIR}/${t} \
+			PACKAGE_BUILD_DIR=${BUILD_DIR}/${target} \
 					. ${bs} 2>&1 | \
 					/usr/share/colormake/colormake.pl
 			test ${PIPESTATUS[0]} -eq 0 # fail on build error
@@ -72,7 +79,7 @@ function build_packages {
 					/usr/share/colormake/colormake.pl
 			test ${PIPESTATUS[0]} -eq 0 # fail on build error
 		fi
-		echo "${bs} executed successfully"
+		echo " *** ${bs} executed successfully"
 	done
 }
 
