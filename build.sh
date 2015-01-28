@@ -21,10 +21,21 @@ function create_tree_structure {
 
 function build_packages {
 	for t in ${targets}; do
-		bs=${BUILD_SCRIPTS_DIR}/${t}${build_script_suffix}
-		if [ ! -e "${bs}" ]; then
+		echo 'handling target "'${t}'"'
+		cd ${BUILD_SCRIPTS_DIR}
+		bs=${BUILD_SCRIPTS_DIR}/${t%-dirclean}${build_script_suffix}
+		if [ ! -e "${bs}" ] && [ ! -h "${bs}" ]; then
 			echo no build script named '"'${bs}'"'
 			exit 1
+		fi
+		if [[ ${t}  = *-dirclean ]]; then
+			if [[ ${t%-dirclean}  = *-config ]]; then
+				echo "cannot dirclean a config target !"
+				exit 1
+			fi
+			rm -rf ${BUILD_DIR}/${t}
+			echo "removed build directory for ${t%-dirclean}"
+			continue
 		fi
 
 		# create build dir
