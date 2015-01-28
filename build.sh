@@ -42,14 +42,6 @@ function set_environment {
 function build_packages {
 	for t in ${targets}; do
 		bs=${BUILD_SCRIPTS_DIR}/${t}${build_script_suffix}
-		if [ "${manual_targets}" = "false" ] && \
-			[[ ${bs} = *${config_script_suffix} ]];
-		then
-			echo skipping config build script when no explicit \
-				target is specified
-			continue
-		fi
-
 		# create build dir
 		t=${t%-config}
 		mkdir -p ${BUILD_DIR}/${t}
@@ -91,10 +83,8 @@ function merge_skel {
 }
 
 if [ $# != 0 ]; then
-	manual_targets="true"
 	targets=$*
 else
-	manual_targets="false"
 	targets=$(cat ${CONFIG_DIR}/packages)
 fi
 
