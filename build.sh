@@ -135,6 +135,15 @@ function merge_skel {
 	find ${FINAL_DIR} -name .gitignore -exec rm {} \;
 }
 
+function strip_final {
+	if [ "${CARINO_VERSION_TYPE}" = "release" ]; then
+		for f in $(find ${FINAL_DIR} -xdev -executable -type f); do
+			chmod +w $f
+			${TOOLCHAIN_PREFIX}-strip $f;
+		done
+	fi
+}
+
 if [ $# != 0 ]; then
 	targets=$*
 else
@@ -148,3 +157,4 @@ for target in ${targets}; do
 	build_package ${target}
 done
 merge_skel
+strip_final
