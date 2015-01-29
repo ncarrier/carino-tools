@@ -25,7 +25,6 @@ function create_tree_structure {
 	mkdir -p ${FINAL_DIR}
 	mkdir -p ${BOOT_DIR}
 	mkdir -p ${U_BOOT_DIR}
-	mkdir -p ${PKG_CONFIG_PATH}
 }
 
 function clean_inot_file {
@@ -111,6 +110,7 @@ function build_package {
 		test ${PIPESTATUS[0]} -eq 0 # fail on build error
 	else
 		# .. and cross toolchain for target build
+		PKG_CONFIG_PATH=${CROSS_PKG_CONFIG_PATH} \
 		CFLAGS=${CROSS_CFLAGS} \
 		CPPFLAGS=${CROSS_CPPFLAGS} \
 		LDFLAGS=${CROSS_LDFLAGS} \
