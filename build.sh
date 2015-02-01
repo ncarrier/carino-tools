@@ -137,10 +137,13 @@ function merge_skel {
 
 function strip_final {
 	if [ "${CARINO_VERSION_TYPE}" = "release" ]; then
+		# we don't want to fail if we attempt to strip a script
+		set +e
 		for f in $(find ${FINAL_DIR} -xdev -executable -type f); do
 			chmod +w $f
 			${TOOLCHAIN_PREFIX}-strip $f;
 		done
+		set -e
 	fi
 }
 
