@@ -1,6 +1,9 @@
 #!/bin/bash
 
-#set -x
+if [ "$V" = "1" ]; then
+	set -x
+fi
+
 set -e
 
 . config/build_config
