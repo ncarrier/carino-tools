@@ -43,18 +43,23 @@ do
 	fi
 	local_path=${line%% *}
 	full_path=${local_path}/${filename}
-	# TODO for symbolic links, don't continue, rather create them on target
-	if [ ! -f "${full_path}" ] || [ -L "${full_path}" ]; then
+	if [ ! -f "${full_path}" ]; then
 		continue
 	fi
 	remote_path=/${local_path#${local_prefix}}
-	local_md5=$(md5sum "${local_path}/${filename}" | cut -f 1 -d ' ')
+	if [ -L "${full_path}" ]; then
+		target=$(readlink ${full_path})
+		echo adb shell ln -sf ${target} ${remote_path}/${filename}
+		adb shell ln -sf ${target} ${remote_path}/${filename}
+		continue
+	fi
+	local_md5=$(md5sum "${full_path}" | cut -f 1 -d ' ')
 	remote_md5=$(adb shell md5sum "${remote_path}/${filename}" | cut -f 1 -d ' ')
 	if [ "${local_md5}" = "${remote_md5}" ]; then
 		continue
 	fi
-	echo adb push ${local_path}/${filename} ${remote_path}/
-	adb push ${local_path}/${filename} ${remote_path}/
+	echo adb push ${full_path} ${remote_path}/
+	adb push ${full_path} ${remote_path}/
 done
 
 echo adb shell sync
