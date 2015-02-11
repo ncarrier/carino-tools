@@ -116,6 +116,7 @@ function build_package {
 		LDFLAGS=${CROSS_LDFLAGS} \
 		AS=${CROSS_AS} \
 		CC=${CROSS_CC} \
+		CXX=${CROSS_CXX} \
 		PACKAGE_NAME=${package_name} \
 		PACKAGE_BUILD_DIR=${BUILD_DIR}/${package_name} \
 				. ${bs} 2>&1 | \
