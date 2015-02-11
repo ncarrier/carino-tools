@@ -1,0 +1,5 @@
+inotifywait --recursive --event moved_to,moved_from,close_write --monitor --outfile tmp/inot.log packages/tests/ &
+sleep 1
+tail -f tmp/inot.log | while read line; do echo '***' $line '***'; date +%s > tmp/modified; done &
+while [ 1 ]; do if [ $(($(cat tmp/modified))) -ge $(($(cat tmp/built))) ]; then date +%s > tmp/built; ./tools/bau tests_gpio; adb shell tests_gpio; fi; sleep 1; done
+
