@@ -1,7 +1,9 @@
 alias bb='time ./tools/build.sh'
 alias bau='time ./tools/bau'
 alias sd='echo SD card image generation; sudo ./tools/gen_sd.sh'
-alias st='for g in $(find -name .git); do cd $g/..; pwd; git status; cd -; done'
+alias purple='echo -ne \\033\[35m'
+alias normal='echo -ne \\033\[00m'
+alias st='for g in $(find -name .git); do cd $g/..; purple; pwd; normal; git status; cd -; done'
 alias romnt='adb shell mount -oro,remount /boot; adb shell mount -oro,remount /'
 alias rwmnt='adb shell mount -orw,remount /boot; adb shell mount -orw,remount /'
 
