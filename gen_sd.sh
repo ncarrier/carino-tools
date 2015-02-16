@@ -66,7 +66,7 @@ sync
 umount ${mount_point}
 
 mount /dev/mapper/${root_partition} ${mount_point}
-cp -rpf ${FINAL_DIR}/* ${mount_point}
+cp -rf --preserve=mode,timestamps ${FINAL_DIR}/* ${mount_point}
 sync
 umount ${mount_point}
 
