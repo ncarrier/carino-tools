@@ -1,9 +1,6 @@
 # reboot safely (after remount ro an sync)
 adb shell sync; adb shell mount -oro,remount /; adb shell mount -oro,remount /boot;adb shell reboot
 
-# remount / and /boot read / write
-adb shell mount -orw,remount /boot; adb shell mount -orw,remount /;
-
 # re-adbconnect and adb shell in case communication is broken (reboot...)
 while [ 1 ]; do adb connect 10.10.10.1; adb shell; sleep 1; done
 
@@ -24,7 +21,4 @@ gst-launch-1.0 -v videotestsrc ! \
 	'video/x-raw,width=160,height=120,framerate=(fraction)15/1' ! \
 	y4menc ! \
 	udpsink port=1234 host=10.10.10.12
-
-# attempt to list interesting files put in staging
-for l in $(egrep -v '\.(html|pc|h|png|sgml|css|devhelp2|dict|la)' *.staging_files | grep -v '/share/man/'); do if [ ! -d $l ]; then echo $l; fi; done | sed 's#.*/staging/##g'
 
