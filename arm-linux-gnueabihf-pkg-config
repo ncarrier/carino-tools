@@ -1,6 +1,6 @@
 #!/bin/sh
 
-SYSROOT=/home/nicolas/carino/out/staging
+SYSROOT=${STAGING_DIR}
 export PKG_CONFIG_PATH=${SYSROOT}/lib/pkgconfig
 
 export PKG_CONFIG_DIR=
