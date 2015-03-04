@@ -125,3 +125,10 @@ commands.
 
 Set of commands, mainly one-liners I found usefull at least once, potential
 candidates for having an alias defined in setenv in the future.
+
+## License
+
+    This is part of the Carino project documentation.
+    Copyright (C) 2015
+      Nicolas CARRIER
+    See the file doc/README.md for copying conditions
