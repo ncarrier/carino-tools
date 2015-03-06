@@ -1,6 +1,6 @@
 #!/bin/bash
 
-build_script_suffix=.carbuild
+build_script_suffix=.build
 config_script_suffix=-config${build_script_suffix}
 
 if [ "${V}" = "1" ]; then

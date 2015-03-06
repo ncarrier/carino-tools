@@ -8,13 +8,13 @@ alias romnt='adb shell mount -oro,remount /boot; adb shell mount -oro,remount /'
 alias rwmnt='adb shell mount -orw,remount /boot; adb shell mount -orw,remount /'
 
 # completion for bb and bau aliases
-_carbuild()
+_build()
 {
 	cur="${COMP_WORDS[COMP_CWORD]}"
-	targets=$(\ls build_scripts/*.carbuild | sed 's#.*/\(.*\)\.carbuild#\1#g')
+	targets=$(\ls build_scripts/*.build | sed 's#.*/\(.*\)\.build#\1#g')
 	COMPREPLY=( $(compgen -W "${targets}" -- ${cur}) )
 }
 
-complete -F _carbuild bb
-complete -F _carbuild bau
-complete -F _carbuild ./build.sh
+complete -F _build bb
+complete -F _build bau
+complete -F _build ./build.sh
