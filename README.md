@@ -104,6 +104,13 @@ for the rootfs, containing what is in the final dir. This script needs root
 permissions because it has to mount the partitions. The size of each partition
 is controlled in build\_config.
 
+## release.sh
+
+Script used to generate versions of the compiled software for release. Will ask
+the root password in order to generate the SD card image. The software will
+be compiled as a release (with no debug flags and stripped) and the SD card
+images will be placed in the versions directory.
+
 ## setenv
 
 Should be sourced when developing for the carino project. Defines the
