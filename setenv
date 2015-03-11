@@ -11,8 +11,12 @@ alias rwmnt='adb shell mount -orw,remount /boot; adb shell mount -orw,remount /'
 _build()
 {
 	cur="${COMP_WORDS[COMP_CWORD]}"
-	targets=$(\ls build_scripts/*.build | sed 's#.*/\(.*\)\.build#\1#g')
-	COMPREPLY=( $(compgen -W "${targets}" -- ${cur}) )
+	targets="$(\ls build_scripts/*.build | sed 's#.*/\(.*\)\.build#\1#g')"
+	list=""
+	for t in ${targets}; do
+		list="${list} ${t} ${t}-dirclean"
+	done
+	COMPREPLY=( $(compgen -W "${list}" -- ${cur}) )
 }
 
 complete -F _build bb
