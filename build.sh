@@ -12,8 +12,8 @@ set -e
 . config/build_config
 
 function on_exit {
-	if [ -n "${inotify_pid}" ]; then
-		kill -9 ${inotify_pid}
+	if [ -n "${staging_inotify_pid}" ]; then
+		kill -9 ${staging_inotify_pid}
 	fi
 }
 
@@ -41,14 +41,15 @@ function clean_inot_file {
 function start_watching_installed_files {
 	target=$1
 	inot_file=$2
+	watched_dir=$3
 
 	tmp_file=$(mktemp)
 	inotifywait --monitor --recursive \
-		--event create,moved_to,modify ${STAGING_DIR} \
+		--event create,moved_to,modify ${watched_dir} \
 		--outfile ${inot_file} \
 		> ${tmp_file} 2>&1 &
 
-	inotify_pid=$!
+	pid=$!
 
 	cat ${tmp_file} | while read line; do
 		if [ "${line}" = "Watches established." ]; then
@@ -57,7 +58,7 @@ function start_watching_installed_files {
 	done
 	rm ${tmp_file}
 
-	echo ${inotify_pid}
+	echo ${pid}
 }
 
 function dirclean {
@@ -90,9 +91,9 @@ function build_package {
 	t=${target%-config}
 	mkdir -p ${BUILD_DIR}/${target}
 
-	inot_file=${BUILD_DIR}/${target}/${target}.staging_files
-	inotify_pid=$(start_watching_installed_files ${target} \
-		${inot_file})
+	staging_inot_file=${BUILD_DIR}/${target}/${target}.staging_files
+	staging_inotify_pid=$(start_watching_installed_files ${target} \
+		${staging_inot_file} ${STAGING_DIR})
 
 	package_name=${target%.host}
 	echo " *** executing build script \"${bs}\""
@@ -125,10 +126,10 @@ function build_package {
 	fi
 	echo " *** ${bs} executed successfully"
 
-	kill ${inotify_pid}
-	inotify_pid=
+	kill ${staging_inotify_pid}
+	staging_inotify_pid=
 
-	clean_inot_file ${inot_file}
+	clean_inot_file ${staging_inot_file}
 }
 
 function merge_skel {
