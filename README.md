@@ -75,13 +75,15 @@ BUILD\_DIR/target/target.staging\_files is created, which contains all the files
 which have been installed in the staging dir during the build process. This is
 to ease the writing of build scripts so that the "integrator" can know among
 which files he is supposed to choose the candidates for installation in the
-final dir.  
+final dir. Also a BUILD\_DIR/target/target.final\_files is created. Both files
+are used by the -dirclean targets to know which files they must remove.  
 Just before build.sh exits, the skeleton in config/skel is merged into the
 final dir, this means that if one has modified something in the skel, he only
 has to build and update a fast building package to get it's modifications pushed
 on target.  
 For each package PACKAGE, a **PACKAGE-dirclean** target is supported, which
-removes the [PACKAGE\_BUILD\_DIR](#PACKAGE\_BUILD\_DIR) directory.
+removes the [PACKAGE\_BUILD\_DIR](#PACKAGE\_BUILD\_DIR) directory. It also
+removes the installed file both in the staging and in the final directories.
 
 Environment variables of influence are :
 
