@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+	echo usage bbfrom first_package_to_build
+	exit 1
+fi
+
+./build.sh $(egrep -A10000 '^'$1'$' config/packages)

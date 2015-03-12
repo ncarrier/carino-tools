@@ -91,6 +91,14 @@ Environment variables of influence are :
 * **CARINO\_VERSION\_TYPE** : if set to "release", the executables in the final
   directory will be stripped and the build will be optimised for size
 
+## bbfrom
+
+Thin wrapper around build.sh, wich builds all the packages listed in
+config/packages, starting from the package whose name is given as an argument.
+Useful mainly if a full build has failed in the middle, for avoiding a new full
+build after the error has been fixed. Also handy to circumvent the lack of
+dependency handling of the build system.
+
 ## cb
 
 Example of some command lines able to build automatically a package if one of

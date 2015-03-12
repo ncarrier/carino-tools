@@ -1,4 +1,5 @@
 alias bb='time ./tools/build.sh'
+alias bbfrom='time ./tools/bbfrom'
 alias bau='time ./tools/bau'
 alias sd='echo SD card image generation; sudo ./tools/gen_sd.sh'
 alias purple='echo -ne \\033\[35m'
@@ -21,5 +22,6 @@ _build()
 }
 
 complete -F _build bb
+complete -F _build bbfrom
 complete -F _build bau
 complete -F _build ./build.sh
