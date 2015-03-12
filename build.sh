@@ -15,6 +15,9 @@ function on_exit {
 	if [ -n "${staging_inotify_pid}" ]; then
 		kill -9 ${staging_inotify_pid}
 	fi
+	if [ -n "${final_inotify_pid}" ]; then
+		kill -9 ${final_inotify_pid}
+	fi
 }
 
 function create_tree_structure {
@@ -91,9 +94,14 @@ function build_package {
 	t=${target%-config}
 	mkdir -p ${BUILD_DIR}/${target}
 
+	# list files which will be installed in the staging dir
 	staging_inot_file=${BUILD_DIR}/${target}/${target}.staging_files
 	staging_inotify_pid=$(start_watching_installed_files ${target} \
 		${staging_inot_file} ${STAGING_DIR})
+	# list files which will be installed in the final dir
+	final_inot_file=${BUILD_DIR}/${target}/${target}.final_files
+	final_inotify_pid=$(start_watching_installed_files ${target} \
+		${final_inot_file} ${FINAL_DIR})
 
 	package_name=${target%.host}
 	echo " *** executing build script \"${bs}\""
@@ -128,8 +136,11 @@ function build_package {
 
 	kill ${staging_inotify_pid}
 	staging_inotify_pid=
+	kill ${final_inotify_pid}
+	final_inotify_pid=
 
 	clean_inot_file ${staging_inot_file}
+	clean_inot_file ${final_inot_file}
 }
 
 function merge_skel {
