@@ -71,8 +71,17 @@ function dirclean {
 		echo "cannot dirclean a config target !"
 		exit 1
 	fi
+
+	# remove files installed by the package in the final dir
+	files_list=${BUILD_DIR}/${target}/${target}.final_files
+	if [ -e ${files_list} ]; then
+		for f in $(cat ${files_list}); do
+			rm -f ${f}
+		done
+	fi
+
 	rm -rf ${BUILD_DIR}/${target}
-	echo " *** removed build directory for ${target%-dirclean}"
+	echo " *** cleaned and removed build directory for ${target%-dirclean}"
 }
 
 function build_package {
