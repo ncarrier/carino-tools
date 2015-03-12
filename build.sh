@@ -64,6 +64,18 @@ function start_watching_installed_files {
 	echo ${pid}
 }
 
+function cleanup_package_files {
+	target=$1
+	install_dir=$2
+
+	files_list=${BUILD_DIR}/${target}/${target}.${install_dir}_files
+	if [ -e ${files_list} ]; then
+		for f in $(cat ${files_list}); do
+			rm -f ${f}
+		done
+	fi
+}
+
 function dirclean {
 	target=$1
 
@@ -72,13 +84,9 @@ function dirclean {
 		exit 1
 	fi
 
-	# remove files installed by the package in the final dir
-	files_list=${BUILD_DIR}/${target}/${target}.final_files
-	if [ -e ${files_list} ]; then
-		for f in $(cat ${files_list}); do
-			rm -f ${f}
-		done
-	fi
+	# remove files installed by the package in the final and staging dirs
+	cleanup_package_files ${target} final
+	cleanup_package_files ${target} staging
 
 	rm -rf ${BUILD_DIR}/${target}
 	echo " *** cleaned and removed build directory for ${target%-dirclean}"
