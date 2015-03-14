@@ -6,6 +6,9 @@ set -e
 readonly TRUE=0
 readonly FALSE=1
 
+export CARINO_VERSION_TYPE="release"
+. config/build_config
+
 function usage {
 	echo "usage : release.sh VEHICLE_NAME VERSION"
 	exit $1
@@ -46,11 +49,13 @@ if [ ${dirty} = TRUE ]; then
 fi
 
 # rebuild from scratch the whole project
-rm -rf out
-CARINO_VERSION_TYPE="release" ./build.sh
+rm -rf ${OUT_DIR}
+./build.sh
 
 # generate the SD card image
 sudo ./gen_sd.sh # asks for the root password, how to get rid of that ? TODO
+
+# TODO put the versions dir in the build config
 mkdir -p versions
-mv out/carino.img versions/${vehicle_name}-${version}.img
+mv ${OUT_DIR}/carino.img versions/${vehicle_name}-${version}.img
 
