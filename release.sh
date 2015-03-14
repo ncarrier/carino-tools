@@ -53,7 +53,7 @@ rm -rf ${OUT_DIR}
 ./build.sh
 
 # generate the SD card image
-sudo ./gen_sd.sh # asks for the root password, how to get rid of that ? TODO
+sudo CARINO_VERSION_TYPE="release" ./gen_sd.sh # asks for the root password, how to get rid of that ? TODO
 
 # TODO put the versions dir in the build config
 mkdir -p ${VERSIONS_DIR}
