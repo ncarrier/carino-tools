@@ -56,6 +56,6 @@ rm -rf ${OUT_DIR}
 sudo ./gen_sd.sh # asks for the root password, how to get rid of that ? TODO
 
 # TODO put the versions dir in the build config
-mkdir -p versions
-mv ${OUT_DIR}/carino.img versions/${vehicle_name}-${version}.img
+mkdir -p ${VERSIONS_DIR}
+mv ${OUT_DIR}/carino.img ${VERSIONS_DIR}/${vehicle_name}-${version}.img
 
