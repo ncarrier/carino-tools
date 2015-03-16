@@ -73,3 +73,10 @@ tar cvjf ${VERSIONS_DIR}/${vehicle_name}-${version}.tar.bz2 \
 # cleanup
 rm -f ${VERSIONS_DIR}/${vehicle_name}-${version}.img \
 	${VERSIONS_DIR}/CarinoSteeringWheel.apk
+
+# version the new version (funny isn't it ?)
+cd ${VERSIONS_DIR}
+git add ${vehicle_name}-${version}.tar.bz2
+git commit -m "${vehicle_name} version ${version}"
+cd -
+
