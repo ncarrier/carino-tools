@@ -59,3 +59,17 @@ sudo CARINO_VERSION_TYPE="release" ./gen_sd.sh
 mkdir -p ${VERSIONS_DIR}
 mv ${OUT_DIR}/carino.img ${VERSIONS_DIR}/${vehicle_name}-${version}.img
 
+# generate the android client
+cd clients/android/CarinoSteeringWheel/; ../../../tools/build-apk.sh; cd -
+
+cp clients/android/CarinoSteeringWheel/bin/CarinoSteeringWheel-debug.apk \
+	${VERSIONS_DIR}/CarinoSteeringWheel.apk
+
+# create the release archive
+tar cvjf ${VERSIONS_DIR}/${vehicle_name}-${version}.tar.bz2 \
+	${VERSIONS_DIR}/${vehicle_name}-${version}.img \
+	${VERSIONS_DIR}/CarinoSteeringWheel.apk
+
+# cleanup
+rm -f ${VERSIONS_DIR}/${vehicle_name}-${version}.img \
+	${VERSIONS_DIR}/CarinoSteeringWheel.apk
