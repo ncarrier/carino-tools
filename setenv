@@ -5,7 +5,7 @@ alias sd='echo SD card image generation; sudo ./tools/gen_sd.sh'
 alias purple='echo -ne \\033\[35m'
 alias normal='echo -ne \\033\[00m'
 alias st='for g in $(find -name .git); do cd ${g%%.git}; purple; pwd; normal; git status; cd -; done'
-alias release='./tools/release.sh'
+alias release='time ./tools/release.sh'
 alias romnt='adb shell mount -oro,remount /boot; adb shell mount -oro,remount /'
 alias rwmnt='adb shell mount -orw,remount /boot; adb shell mount -orw,remount /'
 
