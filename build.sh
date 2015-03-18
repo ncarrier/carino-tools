@@ -70,9 +70,11 @@ function cleanup_package_files {
 
 	files_list=${BUILD_DIR}/${target}/${target}.${install_dir}_files
 	if [ -e ${files_list} ]; then
+		set +e
 		for f in $(cat ${files_list}); do
-			rm -f ${f}
+			rm -df ${f}
 		done
+		set -e
 	fi
 }
 
