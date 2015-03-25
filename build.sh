@@ -144,7 +144,9 @@ function build_package {
 		CFLAGS=${CROSS_CFLAGS} \
 		CPPFLAGS=${CROSS_CPPFLAGS} \
 		LDFLAGS=${CROSS_LDFLAGS} \
+		AR=${CROSS_AR} \
 		AS=${CROSS_AS} \
+		LD=${CROSS_LD} \
 		CC=${CROSS_CC} \
 		CXX=${CROSS_CXX} \
 		PACKAGE_NAME=${package_name} \
