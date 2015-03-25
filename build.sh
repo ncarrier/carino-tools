@@ -127,6 +127,7 @@ function build_package {
 	if [[ ${target} = *.host ]]; then
 		# use host toolchain for host tools build...
 		PKG_CONFIG_PATH=${HOST_PKG_CONFIG_PATH} \
+		PKG_CONFIG=${HOST_PKG_CONFIG} \
 		CFLAGS=${HOST_CFLAGS} \
 		CPPFLAGS=${HOST_CPPFLAGS} \
 		LDFLAGS=${HOST_LDFLAGS} \
@@ -139,6 +140,7 @@ function build_package {
 	else
 		# .. and cross toolchain for target build
 		PKG_CONFIG_PATH=${CROSS_PKG_CONFIG_PATH} \
+		PKG_CONFIG=${CROSS_PKG_CONFIG} \
 		CFLAGS=${CROSS_CFLAGS} \
 		CPPFLAGS=${CROSS_CPPFLAGS} \
 		LDFLAGS=${CROSS_LDFLAGS} \
