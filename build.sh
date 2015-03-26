@@ -136,7 +136,6 @@ function build_package {
 		PACKAGE_BUILD_DIR=${BUILD_DIR}/${target} \
 				. ${bs} 2>&1 | \
 				/usr/share/colormake/colormake.pl
-		test ${PIPESTATUS[0]} -eq 0 # fail on build error
 	else
 		# .. and cross toolchain for target build
 		PKG_CONFIG_PATH=${CROSS_PKG_CONFIG_PATH} \
@@ -153,7 +152,11 @@ function build_package {
 		PACKAGE_BUILD_DIR=${BUILD_DIR}/${package_name} \
 				. ${bs} 2>&1 | \
 				/usr/share/colormake/colormake.pl
-		test ${PIPESTATUS[0]} -eq 0 # fail on build error
+	fi
+	if [ ! ${PIPESTATUS[0]} -eq 0 ]; then
+		echo -e '\033[31;7m *** building target "'${target}\
+			'" failed\033[00m'
+		exit 1
 	fi
 	echo " *** ${bs} executed successfully"
 
