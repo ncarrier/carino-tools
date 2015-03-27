@@ -189,7 +189,17 @@ function strip_final {
 if [ $# != 0 ]; then
 	targets=$*
 else
-	targets=$(sed 's/#.*//g' ${CONFIG_DIR}/${CARINO_VEHICLE}/packages)
+	targets="$(sed 's/#.*//g' ${CONFIG_DIR}/packages)"
+	if [ -f ${CONFIG_DIR}/${CARINO_VEHICLE}/packages ]; then
+		targets="${targets}
+			$(sed 's/#.*//g' ${CONFIG_DIR}/${CARINO_VEHICLE}/packages)"
+	fi
+	if [ "${CARINO_VERSION_TYPE}" != "release" ]; then
+		if [ -f ${WORKSPACE_DIR}/packages.debug ]; then
+			targets="${targets}
+				$(sed 's/#.*//g' ${WORKSPACE_DIR}/packages.debug)"
+		fi
+	fi
 fi
 
 trap "on_exit" EXIT RETURN 2 3 15
