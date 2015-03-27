@@ -1,5 +1,5 @@
-alias bb='time ./tools/build.sh'
-alias bbfrom='time ./tools/bbfrom'
+alias bb='time nice -n19 ./tools/build.sh'
+alias bbfrom='time nice -n19 ./tools/bbfrom'
 alias bau='time ./tools/bau'
 alias sd='echo SD card image generation; sudo ./tools/gen_sd.sh'
 alias purple='echo -ne \\033\[35m'
