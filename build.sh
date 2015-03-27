@@ -205,6 +205,9 @@ fi
 trap "on_exit" EXIT RETURN 2 3 15
 
 create_tree_structure
+
+echo " *** building packages $(echo ${targets})"
+
 for target in ${targets}; do
 	build_package ${target}
 done
