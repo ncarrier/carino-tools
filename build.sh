@@ -189,7 +189,7 @@ function strip_final {
 if [ $# != 0 ]; then
 	targets=$*
 else
-	targets=$(cat ${CONFIG_DIR}/${CARINO_VEHICLE}/packages)
+	targets=$(sed 's/#.*//g' ${CONFIG_DIR}/${CARINO_VEHICLE}/packages)
 fi
 
 trap "on_exit" EXIT RETURN 2 3 15
