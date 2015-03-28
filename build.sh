@@ -180,7 +180,7 @@ function strip_final {
 		set +e
 		for f in $(find ${FINAL_DIR} -xdev -executable -type f); do
 			chmod +w $f
-			${TOOLCHAIN_PREFIX}-strip $f;
+			${CROSS_STRIP} $f 2> /dev/null;
 		done
 		set -e
 	fi
