@@ -178,9 +178,17 @@ function strip_final {
 	if [ "${CARINO_VERSION_TYPE}" = "release" ]; then
 		# we don't want to fail if we attempt to strip a script
 		set +e
+		# pattern-match to on _file_'s output to avoid ASCII files
+		pattern='.*ASCII text executable'
 		for f in $(find ${FINAL_DIR} -xdev -executable -type f); do
+			if [[ $(file $f) =~ ${pattern} ]]; then
+				continue
+			fi
+			# strip but store and restore permissions
+			mode=$(stat -c%a $f)
 			chmod +w $f
-			${CROSS_STRIP} $f 2> /dev/null;
+			${CROSS_STRIP} $f;
+			chmod ${mode} $f
 		done
 		set -e
 	fi
