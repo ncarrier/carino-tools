@@ -11,6 +11,12 @@ set -e
 
 . config/build_config
 
+if [ "${TRAVIS}" = "true" ]; then
+	inotifywait=${TOOLS_DIR}/inotifywait
+else
+	inotifywait=inotifywait
+fi
+
 function on_exit {
 	if [ -n "${staging_inotify_pid}" ]; then
 		kill -9 ${staging_inotify_pid}
@@ -47,7 +53,7 @@ function start_watching_installed_files {
 	watched_dir=$3
 
 	tmp_file=$(mktemp)
-	inotifywait --monitor --recursive \
+	${inotifywait} --monitor --recursive \
 		--event create,moved_to,modify ${watched_dir} \
 		--outfile ${inot_file} \
 		> ${tmp_file} 2>&1 &
