@@ -8,7 +8,16 @@
 #set -x
 set -e
 
-. config/build_config
+# TODO factor this with the global config
+# TODO should this, be done in a host alchemy module ?
+# TODO or as a new, custom, image type ?
+OUT_DIR=./out/carino-obstination
+IMAGE_SIZE=80
+BOOT_DIR=${OUT_DIR}/staging/boot
+FINAL_DIR=${OUT_DIR}/final
+U_BOOT_DIR=${BOOT_DIR}
+BOOT_PARTITION_SIZE=10
+CONFIG_DIR=products/carino/obstination/config
 
 if [ "$(id -u)" != 0 ]; then
 	echo this script must be ran as root user
@@ -61,12 +70,16 @@ dcfldd if=${U_BOOT_DIR}/u-boot-sunxi-with-spl.bin of=${loop_dev} bs=1024 seek=8
 # copy files
 mount_point=$(mktemp --directory)
 mount /dev/mapper/${boot_partition} ${mount_point}
-cp ${BOOT_DIR}/* ${mount_point}
+cp ${BOOT_DIR}/uImage ${mount_point}
+cp ${CONFIG_DIR}/uEnv.txt ${mount_point}
+cp ${OUT_DIR}/build/linux/arch/arm/boot/dts/sun7i-a20-pcduino3-nano.dtb ${mount_point}
 sync
 umount ${mount_point}
 
 mount /dev/mapper/${root_partition} ${mount_point}
 cp -rf --preserve=mode,timestamps ${FINAL_DIR}/* ${mount_point}
+# alchemy forcefully copies the zImage, which we don't need
+rm ${mount_point}/boot/zImage
 sync
 umount ${mount_point}
 
