@@ -12,7 +12,8 @@ fi
 # once we'll have multiple products or variants, we will have to specify the
 # next two, via command line parameters
 export TARGET_PRODUCT=carino
-export TARGET_PRODUCT_VARIANT=obstination
+TARGET_PRODUCT_VARIANT=${variant:-obstination}
+export TARGET_PRODUCT_VARIANT
 
 export ALCHEMY_TARGET_CONFIG_DIR=${ALCHEMY_WORKSPACE_DIR}/products/${TARGET_PRODUCT}/${TARGET_PRODUCT_VARIANT}/config
 export ALCHEMY_TARGET_OUT=${ALCHEMY_WORKSPACE_DIR}/out/${TARGET_PRODUCT}-${TARGET_PRODUCT_VARIANT}
